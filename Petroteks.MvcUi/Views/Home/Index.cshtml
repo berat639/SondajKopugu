@@ -1,0 +1,53 @@
+﻿@model MainPageViewModel
+@{
+    ViewData["Title"] = Model.MainPage.Title;
+    ViewData["Description"] = Model.MainPage.Description;
+    ViewData["MetaTags"] = Model.MainPage.MetaTags;
+    ViewData["Keywords"] = Model.MainPage.Keywords;
+}
+
+<!--==========================
+  Header Section
+ ============================-->
+@await Component.InvokeAsync("Notice")
+@Html.Raw(Model.MainPage.Slider)
+
+
+    
+
+<!-- Modal Structure -->
+
+
+<main id="main">
+    @Html.Raw(Model.MainPage.TopContent)
+</main>
+
+@Html.Raw(Model.MainPage.BottomContent)
+
+@section Scripts{
+ <script>
+     function BilgilendirmeMail()
+     {
+            var mailadress = $("#email").val();
+         if (mailadress != null && mailadress != "")
+            {
+                $.ajax({
+                    type: "GET",
+                    url: "/Home/BilgilendirmeMail?email=" + mailadress,
+                    success: function (response) {
+                        toastr.success(response);
+                    },
+                    failure: function (response) {
+                        toastr.error('Sunucu ile bağlantı kurulamadı.');
+                    },
+                    error: function (response) {
+                        toastr.error('Sunucu ile bağlantı kurulamadı.');
+                    }
+                });
+            }
+            else {
+                toastr.error('Lütfen e-mail adresini doğru giriniz');
+            }
+     }
+ </script>
+}

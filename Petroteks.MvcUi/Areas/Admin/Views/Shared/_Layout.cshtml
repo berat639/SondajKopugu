@@ -1,0 +1,489 @@
+﻿
+@{
+    Layout = null;
+    User LoginUser = (User)ViewBag.LoginUser;
+}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicon.png">
+    <title>Petroteks Kullanıcı Bilgisi</title>
+    <!-- This page css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link href="~/Admin/dist/css/tabulator.min.css" rel="stylesheet" />
+    <link href="~/Admin/assets/libs/bootstrap/dist/css/tabulator_bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="~/Admin/dist/css/style.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <meta name="robots" content="noindex, nofollow">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .ck-editor__editable {
+            min-height: 400px;
+        } 
+        ul.ui-autocomplete {
+            z-index: 1100;
+        }
+    </style> 
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar" data-navbarbg="skin6">
+            <nav class="navbar top-navbar navbar-expand-md">
+                <div class="navbar-header" data-logobg="skin6">
+                    <!-- This is for the sidebar toggle which is visible on mobile only -->
+                    <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
+                        <i class="ti-menu ti-close"></i>
+                    </a>
+                    <!-- ============================================================== -->
+                    <!-- Logo -->
+                    <!-- ============================================================== -->
+                    <div class="navbar-brand">
+                        <!-- Logo icon -->
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index">
+                            <b class="logo-icon">
+                                <!-- Dark Logo icon -->
+                                <img src="~/Admin/assets/images/logopetroteks.png" alt="wrapkit" width="160px">
+                            </b>
+                            <!--End Logo icon -->
+                            <!-- Logo text -->
+
+                        </a>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- End Logo -->
+                    <!-- ============================================================== -->
+                    <!-- ============================================================== -->
+                    <!-- Toggle which is visible on mobile only -->
+                    <!-- ============================================================== -->
+                    <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)"
+                       data-toggle="collapse" data-target="#navbarSupportedContent"
+                       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="ti-more"></i>
+                    </a>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-left mr-auto ml-3 pl-1">
+                        <!-- Notification -->
+                        <!-- End Notification -->
+                        <!-- ============================================================== -->
+                        <!-- create new -->
+                        <!-- ============================================================== -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-language svg-icon"></i>
+
+                                Dil:@LanguageContext.CurrentLanguage.Name<i data-feather="chevron-down" class="svg-icon"></i>
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @foreach (var item in LanguageContext.WebsiteLanguages)
+                                {
+                                    <a class="dropdown-item" id="@item.KeyCode" title="@item.KeyCode" href="@Url.Action("ChangeCulture","Home",new { area="Admin", KeyCode=item.KeyCode})">
+                                        <img src="~/LanguageImages/@item.IconCode" asp-append-version="true" alt="@item.Name"> @item.Name
+                                    </a>
+                                }
+                            </div>
+
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="globe" class="svg-icon"></i>
+                                @WebsiteContext.CurrentWebsite.Name
+                                <i data-feather="chevron-down" class="svg-icon"></i>
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @foreach (var item in WebsiteContext.Websites)
+                                {
+                                    <a class="dropdown-item" id="@item.Name" title="@item.Name" href="@Url.Action("ChangeWebsite","Home",new { area="Admin", Name=item.Name})">
+                                        @item.Name
+                                    </a>
+                                }
+                            </div>
+
+                        </li>
+                    </ul>
+                    <!-- ============================================================== -->
+                    <!-- Right side toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-right">
+                        <!-- ============================================================== -->
+                        <!-- Search -->
+                        <!-- ============================================================== -->
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                <img src="~/images/DefaultProfilePhoto.png" alt="user" class="rounded-circle" width="40" />
+                                <span class="ml-2 d-none d-lg-inline-block">
+                                    @if (LoginUser.Role == 0)
+                                    {
+                                        <span>Admin:</span>
+                                    }
+                                    else if (LoginUser.Role == 1)
+                                    {
+                                        <span>Editör:</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Izinsiz:</span>
+                                    } 
+                                    <span class="text-dark">@LoginUser.Firstname @LoginUser.Lastname</span> <i data-feather="chevron-down"  class="svg-icon"></i>
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
+                                @*<a class="dropdown-item" href="javascript:void(0)">
+                                    <i data-feather="user"
+                                       class="svg-icon mr-2 ml-1"></i>
+                                    Profilim
+                                </a>*@
+                                
+
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="javascript:void(0)">
+                                    <i data-feather="power"
+                                       class="svg-icon mr-2 ml-1"></i>
+                                    Çıkış
+                                </a>
+
+
+
+                            </div>
+                        </li>
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar" data-sidebarbg="skin6">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="sidebar-item">
+                            <a class="sidebar-link sidebar-link" asp-area="Admin" asp-controller="Home" asp-action="Index" aria-expanded="false">
+                                <i data-feather="user" class="feather-icon"></i><span class="hide-menu">Üyeler</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link sidebar-link" asp-area="Admin" asp-controller="Home" asp-action="Bilgilendirme" aria-expanded="false">
+                                <i data-feather="mail" class="feather-icon"></i><span class="hide-menu">Mail Bilgilendirme</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link sidebar-link" asp-area="Admin" asp-controller="Home" asp-action="DuyuruList" aria-expanded="false">
+                                <i data-feather="volume" class="feather-icon"></i><span class="hide-menu">Pop-Up Duyuru</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link sidebar-link" asp-area="Admin" asp-controller="Home" asp-action="WebsitesStatus" aria-expanded="false">
+                                <i data-feather="power" class="feather-icon"></i><span class="hide-menu">Sitelerin Durumu</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow" href="javascript:void(0)"
+                               aria-expanded="false">
+                                <i data-feather="layers" class="feather-icon"></i><span class="hide-menu">Layout Düzeni </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse  first-level base-level-line">
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="NavbarHeaderAdd" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Nav Bar Menü
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="FooterAdd" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Footer
+                                        </span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow" href="javascript:void(0)"
+                               aria-expanded="false">
+                                <i data-feather="file-text" class="feather-icon"></i><span class="hide-menu">Sabit Sayfalar </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse  first-level base-level-line">
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="AnasayfaEdit" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Ana Sayfa
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="HakkimizdaEdit" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Havas Sondaj Köpüğü
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="ContactAdd" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            İletişim
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="GizlilikPolitikasiEdit" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Sondaj Köpüğünün Kullanışı
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="SayfaStandarti" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Ana Sayfa Örnek Standart
+                                        </span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow" href="javascript:void(0)"
+                               aria-expanded="false">
+                                <i data-feather="file-text" class="feather-icon"></i><span class="hide-menu">Diğer Sayfalar </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse  first-level base-level-line">
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="ProductAdd" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Ürün Yönetimi
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="CategoryAdd" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Kategori Yönetimi
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="BlogList" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Blog Yönetimi
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-area="Admin" asp-controller="Pages" asp-action="LanguageAdd" class="sidebar-link">
+                                        <span class="hide-menu">
+                                            Dil Yönetimi
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                @RenderBody()
+
+
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer text-center text-muted">
+                <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-eye"></i> Petrotekste Gör</a>.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+
+    <script src="~/js/site.js"></script>
+    <script src="~/Admin/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+
+    <script src="~/Admin/dist/js/tabulator.js"></script>
+    <script src="~/Admin/dist/js/resize_table.js"></script>
+    <script src="~/Admin/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="~/Admin/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="~/Admin/dist/js/notify.js"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="~/Admin/dist/js/app-style-switcher.js"></script>
+    <script src="~/Admin/dist/js/feather.min.js"></script>
+    <script src="~/Admin/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="~/Admin/dist/js/sidebarmenu.js"></script>
+
+    <!--Custom JavaScript -->
+    <script src="~/Admin/dist/js/custom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="//cdn.ckeditor.com/4.13.1/full/ckeditor.js"></script>
+
+    <script>
+
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+        CKEDITOR.plugins.addExternal('SelectTemplate', 'Admin/dist/js/', 'plugin.js');
+        CKEDITOR.plugins.addExternal('SaveTemplate', 'Admin/dist/js/', 'plugin.js');
+        const config = {
+            filebrowserImageBrowseUrl: "/ImageBrowser",
+            filebrowserImageWindowWidth: 750,
+            filebrowserImageWindowHeight: 606,
+            filebrowserBrowseUrl: "/LinkBrowser",
+            filebrowserWindowWidth: 350,
+            filebrowserWindowHeight: 500,
+            entities_latin: false,
+            extraPlugins: 'font',
+            allowedContent: 'ul li i(ion-android-checkmark-circle)'
+        };
+        // '/NewLayout/css/materialize.min.css'
+
+        config.contentsCss = ['/NewLayout/css/style.css',];
+        config.allowedContent = true;
+        config.extraAllowedContent = 'i(*)';
+        config.removeFormatAttributes = '';
+        const editor1 = document.getElementById("editor1");
+        const editor2 = document.getElementById("editor2");
+        const editor3 = document.getElementById("editor3");
+        const editor4 = document.getElementById("editor4");
+        if (editor1 != null) CKEDITOR.replace(editor1, config);
+        if (editor2 != null) CKEDITOR.replace(editor2, config);
+        if (editor3 != null) CKEDITOR.replace(editor3, config);
+        if (editor4 != null) CKEDITOR.replace(editor4, config);
+        CKEDITOR.dtd.$removeEmpty.i = 0;
+
+
+        $('selectlang').on('change', function () {
+            var id = $(this).val();
+            $.ajax({
+                type: 'GET',
+                url: '/Language/ChangeCulture',
+                data: { lang: JSON.stringify(id) },
+                success: function (e) {
+
+                }
+
+            });
+        }); 
+    </script>
+    
+
+
+    @RenderSection("Scripts", required: false)
+
+
+</body>
+
+</html>

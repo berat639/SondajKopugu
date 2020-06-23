@@ -1,0 +1,86 @@
+﻿@model CategoryListViewModel
+@{
+    object LoadSubMenu(ICollection<MenuItem> menuItems)
+    {
+        foreach (var item in menuItems)
+        {
+            if (item is MI_Category category)
+            {
+                var items = Model.GetItems(category.id);
+                if (items.Count == 0)
+                {
+                    PrintCategory(category);
+                }
+                else
+                {
+                    <li class="drop-down">
+                        <a href="@Url.Action("CategoryDetail","Detail", new { categoryName=GetFriendlyTitle(category.Name) , page=1 , category=category.id})" title="@category.Name">@category.Name</a>
+                        <ul>
+                            @LoadSubMenu(items)
+                        </ul>
+                    </li>
+                }
+            }
+            else if (item is MI_Product product)
+            {
+                PrintProduct(product);
+            }
+        }
+        return null;
+    }
+
+    object PrintProduct(MI_Product product)
+    {
+        <li>
+            <a href="@Url.Action("ProductDetail","Detail",new { produtname=GetFriendlyTitle(product.SupTitle) , id=product.id})" title="@product.SupTitle">@product.SupTitle</a>
+        </li>
+        return null;
+    }
+
+    object PrintCategory(MI_Category mI_Category)
+    {
+        <li>
+            <a href="@Url.Action("CategoryDetail","Detail", new { categoryName=GetFriendlyTitle(mI_Category.Name) , page=1 , category=mI_Category.id})" title="@mI_Category.Name">@mI_Category.Name</a>
+        </li>
+        return null;
+    }
+
+}
+@{
+
+    MI_Category ROOT = Model.MainCategories.FirstOrDefault(x => x.Name.Equals("ROOT"));
+    if (ROOT!=null)
+    {
+        var FirstList = new List<MenuItem>();
+        FirstList.AddRange(Model.MainCategories.Where(x => x.id != ROOT.id).ToList());
+        FirstList.AddRange(Model.GetProducts(ROOT.id));
+        FirstList = FirstList.OrderByDescending(x => x.Priority).ToList();
+
+        foreach (var item in FirstList)
+        {
+            if (item is MI_Category category)
+            {
+                var items = Model.GetItems(category.id);
+                if (items.Count == 0)
+                {
+                    PrintCategory(category);
+                }
+                else
+                {
+                    <li class="drop-down">
+                        <a href="@Url.Action("CategoryDetail","Detail", new { categoryName=GetFriendlyTitle(category.Name) , page=1 , category=category.id})" title="@category.Name">@category.Name</a>
+                        <ul>
+                            @LoadSubMenu(items)
+                        </ul>
+                    </li>
+                }
+            }
+            else if (item is MI_Product product)
+            {
+                PrintProduct(product);
+            }
+        }
+    }
+
+}
+

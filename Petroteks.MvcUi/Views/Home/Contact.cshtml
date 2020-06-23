@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "iletişim | Sondaj Kopugu";
+    ViewData["Description"] = "Sondaj Kopugu iletişim sayfası";
+    ViewData["MetaTags"] = "";
+    ViewData["Keywords"] = "Sondaj Kopugu Fiyat, Sondaj Kopugu İletişim, Sondaj Kopugu telefon";
+}
+@await Component.InvokeAsync("Contact")
+@section Scripts{
+    <script>
+        $('#gonder').click(function () {
+            var İsim = $("#İsim").val();
+            var Email = $("#Email").val();
+            var Konu = $("#Konu").val();
+            var Mesaj = $("#Mesaj").val();
+            var model = {
+                İsim: İsim,
+                Email: Email,
+                Konu: Konu,
+                Mesaj: Mesaj
+            };
+
+
+            $.ajax({
+                url: "/Home/Iletisim",
+                type: "POST",
+                data: { model: model },
+                success: function (response) {
+                    toastr.success(response);
+                },
+                failure: function (response) {
+                    toastr.error(response);
+                },
+                error: function (response) {
+                    toastr.error(response);
+                }
+            });
+        });
+    </script>
+}

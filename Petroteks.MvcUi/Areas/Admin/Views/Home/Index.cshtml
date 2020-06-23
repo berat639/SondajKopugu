@@ -1,0 +1,156 @@
+﻿@model ICollection<User>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<div id="auth-modal" class="modal fade" tabindex="-1" role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center mt-2 mb-4">
+                </div>
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <label for="SelectAuth">Password</label>
+                        <select id="SelectAuth">
+                            <option value="0">Admin</option>
+                            <option value="1">Editör</option>
+                            <option value="2">İzinsiz</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group text-center">
+
+                    <button class="btn btn-rounded btn-success" onclick="ModalFormSubmit()" id="modalButton" type="submit">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.modal -->
+</div>
+
+<!-- basic table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="zero_config" class="table table-striped table-bordered no-wrap text-center">
+                        <thead>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>Rolü</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>Email</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>@item.Firstname @item.Lastname</td>
+
+                                    @if (item.Role == 0)
+                                    {
+                                        <td>Admin</td>
+                                    }
+                                    else if (item.Role == 1)
+                                    {
+                                        <td>Editör</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Izinsiz</td>
+                                    }
+                                    <td>2018/05/01</td>
+                                    <td><span class="badge badge-light-success">@item.Email</span></td>
+                                    <td><span class="badge badge-light-success">@item.TagName</span></td>
+                                    <td>
+                                        <button type="button" onclick="DeleteUser(@item.id)" class="btn btn-danger btn-rounded"><i class="fas fa-trash"></i> </button>
+                                        <button id="EditButton" type="button" onclick="OpenModalButton(this)" data-id="@item.id" data-role="@item.Role" data-toggle="modal" data-target="#auth-modal" class="btn btn-success btn-rounded"><i class="fas fa-edit"></i> </button>
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>Rolü</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>Email</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>Durum</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        var EditDataId = 0;
+
+        function OpenModalButton(btn) {
+            var Id = $(btn).data('id');
+            var Role = $(btn).data('role');
+            EditDataId = Id;
+            $("#SelectAuth").val(Role);
+        }
+
+            function ModalFormSubmit() {
+                var ChangedRole = $("#SelectAuth").val();
+                SelectAuth(EditDataId, ChangedRole);
+                $('#auth-modal').modal('toggle');
+            }
+
+        function DeleteUser(id) {
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Home/DeleteUser?id=" + id,
+                success: function (response) {
+                    toastr.success('İşlem tamamlandı.');
+                    location.reload();
+                },
+                failure: function (response) {
+                    toastr.error('Sunucu ile bağlantı kurulamadı.');
+                },
+                error: function (response) {
+                    toastr.error('Sunucu ile bağlantı kurulamadı.');
+                }
+            });
+        }
+
+        function SelectAuth(id, role) {
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Home/SelectAuth?id=" + id + "&role=" + role,
+                success: function (response) {
+                    toastr.success('İşlem tamamlandı.');
+                    location.reload();
+                },
+                failure: function (response) {
+                    toastr.error('Sunucu ile bağlantı kurulamadı.');
+                },
+                error: function (response) {
+                    toastr.error('Sunucu ile bağlantı kurulamadı.');
+                }
+            });
+        }
+    </script>
+}

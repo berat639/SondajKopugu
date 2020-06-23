@@ -1,0 +1,63 @@
+﻿@model MainPage
+@{
+    ViewData["Title"] = "Ana Sayfa Düzenleme";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                @using (Html.BeginForm())
+                {
+                    <h4 class="card-title">Meta Açıklama</h4>
+                    <div class="form-group">
+                        <input type="text" class="form-control" asp-for="Description" aria-describedby="Meta Açıklama" placeholder="MetaDescription">
+                        <small id="" class="form-text text-muted">Karakter sayısı kuralı girilecek</small>
+                    </div>
+                    <h4 class="card-title">Meta Anahtar kelime</h4>
+                    <div class="form-group">
+                        <input type="text" class="form-control" asp-for="Keywords" aria-describedby="MetaKeyword" placeholder="MetaKeyword">
+                        <small id="name" class="form-text text-muted">Anahtar Kelimeleri lütfen virgül ile ayırın.</small>
+                    </div>
+                    <h4 class="card-title">Sayfa Başlığı</h4>
+                    <div class="form-group">
+                        <input type="text" class="form-control" asp-for="Title" aria-describedby="MetaTitle" placeholder="MetaTitle">
+                        <small id="name" class="form-text text-muted">Anahtar Kelimeleri lütfen virgül ile ayırın.</small>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" asp-for="MetaTags" placeholder="Meta İnputları">
+                            
+                        </textarea>
+                    </div>
+                    <h4 class="card-title">Üst Kısım Editör</h4>
+                    <div class="form-group">
+                        <textarea id="editor1" name="Slider">
+                            @Html.Raw(Model.Slider)
+                        </textarea>
+                    </div>
+
+                    <h4 class="card-title">Giriş Kısım Editör</h4>
+                    <div class="form-group">
+                        <textarea id="editor2" name="TopContent">
+                            @Html.Raw(Model.TopContent)
+                        </textarea>
+                    </div>
+                    <h4 class="card-title">Alt Kısım Editör</h4>
+                    <div class="form-group">
+                        <textarea id="editor3" name="BottomContent">
+                            @Html.Raw(Model.BottomContent)
+                        </textarea>
+                    </div>
+                    <br />
+                    <center><input type="submit" class="btn btn-success" value="Kaydet" /></center>
+
+                }
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>

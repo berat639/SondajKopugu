@@ -1,0 +1,237 @@
+﻿@model MailViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+<script>
+
+</script>
+<div id="mail-modal" class="modal fade" tabindex="-1" role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <div class="custom-control">
+                        <label for="mail">Email:</label>
+                        <input type="text" id="mail" name="mail" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="custom-control">
+                        <label for="tags">Kategori:</label>
+                        <input id="Kategori" class="form-control" type="text">
+                    </div>
+                </div>
+                <div class="form-group text-center">
+
+                    <button class="btn btn-rounded btn-success" onclick="BilgilendirmeEkle();" type="submit">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.modal -->
+</div>
+<div class="card">
+    <div class="card-body">
+
+
+        <form id="MailForm" enctype="multipart/form-data" method="post">
+            <h4 class="card-title">Konu Basligi</h4>
+            <div class="form-group">
+                <input type="text" class="form-control" asp-for="Subject" aria-describedby="Konu Basligi" placeholder="Konu Basligi">
+            </div>
+
+            <h4 class="card-title">Mesaj</h4>
+            <div class="form-group">
+                <textarea id="editor1" name="Body">
+                    @Html.Raw(Model.Body)
+                </textarea>
+            </div>
+
+            <h4 class="card-title">Gonderilecek Dosyalar</h4>
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input type="file" asp-for="File" class="custom-file-input">
+                    <label class="custom-file-label">Dosya Seç</label>
+                </div>
+            </div>
+
+            <div class="form-group table-controls text-center">
+                <button id="MailButton" type="button" data-toggle="modal" data-target="#mail-modal" class="btn waves-effect waves-light btn-outline-dark btn-rounded"><i class="fas fa-plus"></i> Mail Adresi Ekle </button>
+                <button id="select-all" type="button" class="btn waves-effect waves-light btn-secondary btn-rounded"><i class="fas fa-check"></i>  Hepsini Seç</button>
+                <button id="deselect-all" type="button" class="btn waves-effect waves-light btn-light btn-rounded"><i class="fas fa-unlink"></i> Tüm seçilenleri Bırak</button>
+                <button id="postSelected" type="submit" class="btn waves-effect waves-light btn-success btn-rounded"> <i class="fas fa-share"></i> Seçtiklerine Gönder</button>
+            </div>
+            <div class="form-group">
+                <div id="example-table"></div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts{
+    <script>
+
+        $(function () {
+            var autocomplateobj = [];
+         @foreach (var item in Model.Emails)
+         {
+            @:autocomplateobj.push('@item.Category');
+         }
+
+        //let x = (autocomplateobj) => autocomplateobj.filter((v, i) => autocomplateobj.indexOf(v) === i);
+         //console.log(x(autocomplateobj));
+        let unique = [...new Set(autocomplateobj)];
+          $("#Kategori").autocomplete({
+            source: unique
+          });
+        });
+        var table;
+        function BilgilendirmeEkle() {
+            var lastid = table.getRows().length + 1;
+            lastid++;
+            var mail = $("#mail").val();
+            var Kategori = $("#Kategori").val();
+            try {
+                toastr.success("Başarı ile Mail eklendi");
+                table.addRow({
+                    id: lastid,
+                    mail: mail,
+                    kategori: Kategori,
+                });
+                 $.ajax({
+                     type: "GET",
+                     url: "/Admin/Home/BilgilendirmeEkle?mail=" + mail +"&category="+Kategori,
+                     success: function (response) {
+                         location.reload();
+                      toastr.success(response)
+                     },
+                     failure: function (response) {
+                      toastr.error(response)
+                     },
+                     error: function (response) {
+                      toastr.error(response)
+                     }
+                 });
+            }
+            catch (error) {
+                toastr.error("Hata:" + error);
+            }
+        }
+
+        setTimeout(function () {
+            $(".tabulator-col-title").eq(0).click();
+        }, 300);
+
+        var tabledata = [];
+        @foreach (var item in Model.Emails)
+        {
+            @:tabledata.push({ id: @item.id , Category: '@item.Category' , EmailAddress: '@item.EmailAddress' });
+        }
+
+        table = new Tabulator("#example-table", {
+            data: tabledata,
+            selectable: true,
+            movableColumns: true,
+            pagination: "local",
+            layout: "fitColumns",
+            paginationSize: 6,
+            paginationSizeSelector: [3, 6, 8, 10],
+
+            columns: [
+
+                {
+                    title: "Kategori", field: "Category", align: "left", editor: "select",
+                    headerFilter: true, headerFilterParams: {
+                        values: {
+                            @foreach (var item in Model.Emails)
+                            {
+                                @:"@item.Category": "@item.Category",
+                            }
+                        }
+                    }
+
+                },
+                { title: "Email", field: "EmailAddress", align: "left", editor: "input", headerFilter: "input" },
+
+
+                {
+                    title: "Durum", formatter: "buttonCross", align: "center", cellClick: function (e, cell) {
+                        var cellcontent = JSON.stringify(cell.getRow().getData().mail);
+                        var cellid = JSON.stringify(cell.getRow().getData().id);
+                        var dialog = $.confirm({
+                            title: "Dikkat!", icon: 'fa fa-trash', theme: 'modern', type: 'orange', content: cellcontent + " silmek üzeresiniz!", buttons: {
+                                VAZGEÇ: function () {
+                                    dialog.close();
+                                },
+                                SİL: function () {
+                                    dialog.close();
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "/Admin/Home/BilgilendirmeSil?id=" + cellid,
+                                        success: function (response) {
+                                            toastr.success("Silindi")
+                                            cell.getRow().delete();
+                                        },
+                                        failure: function (response) {
+                                              toastr.error("Hata")
+                                        },
+                                        error: function (response) {
+                                             toastr.error("Hata")
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                },
+
+            ],
+
+        });
+
+
+    $("#postSelected").click(function (e) {
+        var selectedData = table.getSelectedData();
+        var jsonSelectedEmails = JSON.stringify(selectedData);
+        $.ajax({
+            type: "GET",
+            contentType: "application/json",
+            dataType: "json",
+            url: "/Admin/Home/BilgilendirmeEmails",
+            data: {
+                json:jsonSelectedEmails
+            },
+            success: function() {
+                toastr.success("Basarili")
+            },
+            error: function() {
+                toastr.error("Silindi")
+            }
+        });
+    });
+
+
+
+        //select row on "select all" button click
+        $("#select-all").click(function () {
+            table.selectRow();
+            var selectedData = table.getSelectedData();
+            console.log(JSON.stringify(selectedData));
+        });
+
+        //deselect row on "deselect all" button click
+        $("#deselect-all").click(function () {
+            table.deselectRow();
+        });
+
+        table.redraw();
+
+
+    </script>
+}
