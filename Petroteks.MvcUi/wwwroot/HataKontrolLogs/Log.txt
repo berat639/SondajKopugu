@@ -1,0 +1,15 @@
+﻿Attribute'ler olusturuldu
+bentonitepellets linki olusturuldu
+mainpage linki olusturuldu
+PetroBlog linki olusturuldu
+Categories koleksiyonu dolduruldu
+Category linki olusturma islemi bitti
+WebsiteProducts koleksiyonu dolduruldu
+product linki olusturma islemi bitti
+dynamicPages koleksiyonu dolduruldu
+DynamicPage linki olusturma islemi bitti
+blogs koleksiyonu dolduruldu
+Blog linki olusturma islemi bitti
+link olusturma tamamlandi
+yazicilar kapandi
+iSLEMLER TAMAMLANDI

@@ -10,6 +10,7 @@
     <Folder Include="wwwroot\CategoryImages\" />
     <Folder Include="wwwroot\BlogImages\" />
     <Folder Include="wwwroot\LanguageImages\" />
+    <Folder Include="wwwroot\HataKontrolLogs\" />
     <Folder Include="wwwroot\NewLayout\img\" />
     <Folder Include="wwwroot\ProductImages\" />
     <Folder Include="wwwroot\UploadFiles\" />
